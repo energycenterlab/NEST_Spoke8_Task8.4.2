@@ -1,0 +1,30 @@
+---
+SCEN_CONFIG:
+  SCENARIO_NAME: test_household_rich
+  START_DATE: '2015-01-01 00:00:00'  # 'YYY-MM-DD HH:MM:SS'
+  DAYS: 7 # number of days of simulation (if timeresolution is 1)
+  RT_FACTOR: null
+  time_resolution: 1
+SIM_CONFIG:
+  household_rich:
+    RUN_PROCESS:
+      python: household_rich
+    PARAMS:
+      start_date: START_DATE
+      days: DAYS
+      timestep: 60
+    MODELS:
+      hh:
+        PUBLIC: true
+        PARAMS:
+          num: 3
+          nb_occ: 3
+          annual_demand: 4400 # kWh
+        ATTRS: [totload, occ]
+CONNECTIONS: {}
+SCEN_OUTPUTS:
+  DB:
+    step_size: 60
+    attrs: [household_rich.hh_0.totload,household_rich.hh_0.occ,
+            household_rich.hh_1.totload,household_rich.hh_2.occ,
+            household_rich.hh_2.totload,household_rich.hh_2.occ]

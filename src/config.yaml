@@ -1,0 +1,10 @@
+---
+dir:
+  scenarios: scenarios
+  coesi: coesi
+  sims_api: mk_sims
+  models: models
+  outputs: Outputs
+  temp: temp
+  resources: resourcces
+

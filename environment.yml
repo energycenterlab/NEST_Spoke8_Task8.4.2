@@ -1,0 +1,24 @@
+name: coesi
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - pyfmi
+  - fmpy
+  - pyzmq
+  - cython
+  - pip
+  - arrow
+  - pathlib
+  - h5py
+  - dash
+  - matplotlib
+  - numba
+  - loguru
+  - pip:
+      - eppy # energy plus in python
+      - mosaik
+      - pvlib
+      - mesa # for multi-agent system
+      - richardsonpy

@@ -1,0 +1,312 @@
+CONNECTIONS:
+  0:
+    ATTRS:
+    - - P
+      - p_mw
+    FROM: csv_home.HomeSimulator_0
+    PARAMS: {}
+    TO: grid.Grid_0.ext_load_at_bus8
+  1:
+    ATTRS:
+    - - P
+      - p_mw
+    FROM: pvsim.pv0_0
+    PARAMS: {}
+    TO: grid.Grid_0.ext_sgen_at_bus8
+  2:
+    ATTRS:
+    - - P
+      - p_mw
+    FROM: pvsim.pv1_1
+    PARAMS: {}
+    TO: grid.Grid_0.ext_sgen_at_bus9
+  3:
+    ATTRS:
+    - - P
+      - p_mw
+    FROM: pvsim2.pv0_0
+    PARAMS: {}
+    TO: grid.Grid_0.ext_sgen_at_bus7
+  4:
+    ATTRS:
+    - - totload
+      - p_mw
+    FROM:
+    - hhsim.hh3_0
+    - hhsim.hh3_1
+    - hhsim.hh3_2
+    - hhsim.hh5_3
+    - hhsim.hh5_4
+    - hhsim.hh5_5
+    - hhsim.hh5_6
+    PARAMS: {}
+    TO:
+    - grid.Grid_0.ext_load_at_bus1ref
+    - grid.Grid_0.ext_load_at_bus2
+    - grid.Grid_0.ext_load_at_bus3
+    - grid.Grid_0.ext_load_at_bus4
+    - grid.Grid_0.ext_load_at_bus5
+    - grid.Grid_0.ext_load_at_bus6
+    - grid.Grid_0.ext_load_at_bus7
+SCEN_CONFIG:
+  DAYS: 3
+  RT_FACTOR: null
+  SCENARIO_NAME: test_scenario_demo
+  START_DATE: '2015-01-01 00:00:00'
+  stop_time: 259200
+  time_resolution: 1
+SCEN_OUTPUTS:
+  DB:
+    attrs:
+    - grid.Grid_0.bus1ref.vm_pu
+    - grid.Grid_0.bus2.vm_pu
+    - grid.Grid_0.bus3.vm_pu
+    - grid.Grid_0.bus4.vm_pu
+    - grid.Grid_0.bus5.vm_pu
+    - grid.Grid_0.bus6.vm_pu
+    - grid.Grid_0.bus7.vm_pu
+    - grid.Grid_0.bus8.vm_pu
+    - grid.Grid_0.bus9.vm_pu
+    - hhsim.hh3_0.totload
+    - hhsim.hh3_0.occ
+    - hhsim.hh5_5.totload
+    - hhsim.hh5_5.occ
+    - pvsim.pv0_0.P
+    - pvsim.pv1_1.P
+    - pvsim2.pv0_0.P
+    step_size: 60
+SIM_CONFIG:
+  DB:
+    EXTRA_METHODS:
+      set_meta_data: []
+      set_static_data: []
+    MODELS:
+      db:
+        ANY_INPUTS: true
+        ATTRS: []
+        PARAMS:
+          buf_size: 1000
+          dataset_opts: null
+          filename: test_scenario_demo
+          scn_config_file: null
+        PUBLIC: true
+    PARAMS:
+      duration: 259200
+      series_path:
+      - null
+      - null
+      step_size: 60
+    RUN_PROCESS:
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+      python: sims_api.mk_hdf5:MosaikHdf5
+    TYPE: time-based
+    sim_models:
+      db:
+        ANY_INPUTS: true
+        ATTRS: []
+        NON_PERSISTENT: []
+        PARAMS:
+          buf_size: 1000
+          dataset_opts: null
+          filename: test_scenario_demo
+          scn_config_file: null
+        PUBLIC: true
+        TRIGGER: []
+        model_name: db
+    simulator_name: DB
+  csv_home:
+    EXTRA_METHODS: null
+    MODELS:
+      HomeSimulator:
+        ATTRS:
+        - P
+        PARAMS: []
+        PUBLIC: true
+    PARAMS:
+      datafile: timeseries/household_load_occ.csv
+      start_date: '2015-01-01 00:00:00'
+      stepsize: 900
+    RUN_PROCESS:
+      cmd: python mk_timeseries.py %(addr)s
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+    TYPE: time-based
+    sim_models:
+      HomeSimulator:
+        ANY_INPUTS: true
+        ATTRS:
+        - P
+        NON_PERSISTENT: []
+        PARAMS: {}
+        PUBLIC: true
+        TRIGGER: []
+        model_name: HomeSimulator
+    simulator_name: csv_home
+  grid:
+    EXTRA_METHODS: null
+    MODELS:
+      Grid:
+        PARAMS:
+          gridfile: lv_10b_4l
+        PUBLIC: true
+    PARAMS:
+      step_size: 60
+    RUN_PROCESS:
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+      python: sims_api.mk_en_pandapower:Pandapower
+    TYPE: time-based
+    sim_models:
+      Grid:
+        ANY_INPUTS: true
+        ATTRS: []
+        NON_PERSISTENT: []
+        PARAMS:
+          gridfile: lv_10b_4l
+        PUBLIC: true
+        TRIGGER: []
+        model_name: Grid
+    simulator_name: grid
+  hhsim:
+    EXTRA_METHODS: null
+    MODELS:
+      hh3:
+        ATTRS:
+        - totload
+        - occ
+        PARAMS:
+          annual_demand: 4400
+          nb_occ: 3
+        PUBLIC: true
+      hh5:
+        ATTRS:
+        - totload
+        - occ
+        PARAMS:
+          annual_demand: 6500
+          nb_occ: 5
+        PUBLIC: true
+    PARAMS:
+      days: 3
+      start_date: '2015-01-01 00:00:00'
+      timestep: 60
+    RUN_PROCESS:
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+      python: sims_api.mk_household_richpy:HouseholdRich
+    TYPE: time-based
+    sim_models:
+      hh3:
+        ANY_INPUTS: true
+        ATTRS:
+        - totload
+        - occ
+        NON_PERSISTENT: []
+        PARAMS:
+          annual_demand: 4400
+          nb_occ: 3
+        PUBLIC: true
+        TRIGGER: []
+        model_name: hh3
+      hh5:
+        ANY_INPUTS: true
+        ATTRS:
+        - totload
+        - occ
+        NON_PERSISTENT: []
+        PARAMS:
+          annual_demand: 6500
+          nb_occ: 5
+        PUBLIC: true
+        TRIGGER: []
+        model_name: hh5
+    simulator_name: hhsim
+  pvsim:
+    EXTRA_METHODS: null
+    MODELS:
+      pv0:
+        ATTRS:
+        - P
+        PARAMS:
+          latitude: 45
+          longitude: 7.68
+          peakpower: 10
+          surface_azimuth: 0
+          surface_tilt: 20
+        PUBLIC: true
+      pv1:
+        ATTRS:
+        - P
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          optimalangles: true
+          peakpower: 10
+        PUBLIC: true
+    PARAMS:
+      start_date: '2015-01-01 00:00:00'
+      timestep: 3600
+    RUN_PROCESS:
+      cmd: python mk_pvsim_pvlib.py %(addr)s
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+    TYPE: time-based
+    sim_models:
+      pv0:
+        ANY_INPUTS: true
+        ATTRS:
+        - P
+        NON_PERSISTENT: []
+        PARAMS:
+          latitude: 45
+          longitude: 7.68
+          peakpower: 10
+          surface_azimuth: 0
+          surface_tilt: 20
+        PUBLIC: true
+        TRIGGER: []
+        model_name: pv0
+      pv1:
+        ANY_INPUTS: true
+        ATTRS:
+        - P
+        NON_PERSISTENT: []
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          optimalangles: true
+          peakpower: 10
+        PUBLIC: true
+        TRIGGER: []
+        model_name: pv1
+    simulator_name: pvsim
+  pvsim2:
+    EXTRA_METHODS: null
+    MODELS:
+      pv0:
+        ATTRS:
+        - P
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          optimalangles: true
+          peakpower: 20
+        PUBLIC: true
+    PARAMS:
+      start_date: '2015-01-01 00:00:00'
+      timestep: 600
+    RUN_PROCESS:
+      cmd: python mk_pvsim_pvlib.py %(addr)s
+      cwd: C:/Users/Mocci/PycharmProjects/NEST_Spoke8_Task8.4.2_COESI/src/sims_api/
+    TYPE: time-based
+    sim_models:
+      pv0:
+        ANY_INPUTS: true
+        ATTRS:
+        - P
+        NON_PERSISTENT: []
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          optimalangles: true
+          peakpower: 20
+        PUBLIC: true
+        TRIGGER: []
+        model_name: pv0
+    simulator_name: pvsim2

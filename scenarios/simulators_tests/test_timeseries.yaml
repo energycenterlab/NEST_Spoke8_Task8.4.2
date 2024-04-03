@@ -1,0 +1,25 @@
+---
+SCEN_CONFIG:
+  SCENARIO_NAME: test_timeseries
+  START_DATE: '2015-01-01 00:00:00'  # 'YYY-MM-DD HH:MM:SS'
+  DAYS: 1 # number of days of simulation (if timeresolution is 1)
+  RT_FACTOR: null
+  time_resolution: 1
+SIM_CONFIG: # list of simulatorS that will be used in the scenario.
+  timeseries:
+    RUN_PROCESS:
+      cmd: timeseries
+    PARAMS:
+      start_date: START_DATE
+      datafile: 'timeseries/household_load_occ.csv'
+      stepsize: 900
+    MODELS:
+      HomeSimulator:
+        PUBLIC: true
+        PARAMS: [ ]
+        ATTRS: [ P ]
+CONNECTIONS: {}
+SCEN_OUTPUTS:
+  DB:
+    step_size: 900
+    attrs: [timeseries.ts_0.P]

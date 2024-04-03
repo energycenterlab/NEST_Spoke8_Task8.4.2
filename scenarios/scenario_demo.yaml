@@ -1,0 +1,142 @@
+---
+SCEN_CONFIG:
+  SCENARIO_NAME: test_scenario_demo
+  START_DATE: '2015-01-01 00:00:00'  # 'YYY-MM-DD HH:MM:SS'
+  DAYS: 3 # number of days of simulation
+  RT_FACTOR: null
+SIM_CONFIG: # list of simulatorS that will be used in the scenario
+  grid:
+    RUN_PROCESS:
+      python: pandapower
+    PARAMS:
+      step_size: 60
+    MODELS:
+      Grid:
+        PUBLIC: true
+        PARAMS:
+          gridfile: 'lv_10b_4l'
+  csv_home:
+    RUN_PROCESS:
+      cmd: timeseries
+    PARAMS:
+      start_date: START_DATE
+      datafile: 'timeseries/household_load_occ.csv'
+      stepsize: 900
+    MODELS:
+      HomeSimulator:
+        PUBLIC: true
+        PARAMS: [ ]
+        ATTRS: [ P ]
+  pvsim:
+    RUN_PROCESS:
+      cmd: pvlib
+    PARAMS:
+      start_date: START_DATE
+      timestep: 3600
+    MODELS:
+      pv0:
+        PUBLIC: true
+        PARAMS:
+          latitude: 45
+          longitude: 7.68
+          peakpower: 10
+          surface_tilt: 20
+          surface_azimuth: 0
+        ATTRS: [ P ]
+      pv1:
+        PUBLIC: true
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          peakpower: 10
+          optimalangles: true
+        ATTRS: [ P ]
+  pvsim2:
+    RUN_PROCESS:
+      cmd: pvlib
+    PARAMS:
+      start_date: START_DATE
+      timestep: 600
+    MODELS:
+      pv0:
+        PUBLIC: true
+        PARAMS:
+          latitude: 38.12
+          longitude: 13.35
+          peakpower: 20
+          optimalangles: true
+        ATTRS: [ P ]
+  hhsim:
+    RUN_PROCESS:
+      python: household_rich
+    PARAMS:
+      start_date: START_DATE
+      days: DAYS
+      timestep: 60
+    MODELS:
+      hh3:
+        PUBLIC: true
+        PARAMS:
+          num: 3
+          nb_occ: 3
+          annual_demand: 4400 # kWh
+        ATTRS: [ totload, occ ]
+      hh5:
+        PUBLIC: true
+        PARAMS:
+          num: 4
+          nb_occ: 5
+          annual_demand: 6500 # kWh
+        ATTRS: [ totload, occ ]
+CONNECTIONS:
+  0:
+    FROM: csv_home.HomeSimulator_0
+    TO: grid.Grid_0.ext_load_at_bus8
+    ATTRS: [ [ P, p_mw ] ]
+  1:
+    FROM: pvsim.pv0_0
+    TO: grid.Grid_0.ext_sgen_at_bus8
+    ATTRS: [ [ P, p_mw ] ]
+  2:
+    FROM: pvsim.pv1_1
+    TO: grid.Grid_0.ext_sgen_at_bus9
+    ATTRS: [ [ P, p_mw ] ]
+  3:
+    FROM: pvsim2.pv0_0
+    TO: grid.Grid_0.ext_sgen_at_bus7
+    ATTRS: [ [ P, p_mw ] ]
+  4:
+    FROM: [ hhsim.hh3_0,
+            hhsim.hh3_1,
+            hhsim.hh3_2,
+            hhsim.hh5_3,
+            hhsim.hh5_4,
+            hhsim.hh5_5,
+            hhsim.hh5_6 ]
+    TO: [ grid.Grid_0.ext_load_at_bus1ref,
+          grid.Grid_0.ext_load_at_bus2,
+          grid.Grid_0.ext_load_at_bus3,
+          grid.Grid_0.ext_load_at_bus4,
+          grid.Grid_0.ext_load_at_bus5,
+          grid.Grid_0.ext_load_at_bus6,
+          grid.Grid_0.ext_load_at_bus7 ]
+    ATTRS: [ [ totload, p_mw ] ]
+SCEN_OUTPUTS:
+  DB:
+    step_size: 60
+    attrs: [ grid.Grid_0.bus1ref.vm_pu,
+             grid.Grid_0.bus2.vm_pu,
+             grid.Grid_0.bus3.vm_pu,
+             grid.Grid_0.bus4.vm_pu,
+             grid.Grid_0.bus5.vm_pu,
+             grid.Grid_0.bus6.vm_pu,
+             grid.Grid_0.bus7.vm_pu,
+             grid.Grid_0.bus8.vm_pu,
+             grid.Grid_0.bus9.vm_pu,
+             hhsim.hh3_0.totload,
+             hhsim.hh3_0.occ,
+             hhsim.hh5_5.totload,
+             hhsim.hh5_5.occ,
+             pvsim.pv0_0.P,
+             pvsim.pv1_1.P,
+             pvsim2.pv0_0.P ]

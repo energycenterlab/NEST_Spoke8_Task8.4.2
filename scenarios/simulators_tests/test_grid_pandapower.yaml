@@ -1,0 +1,44 @@
+---
+SCEN_CONFIG:
+  SCENARIO_NAME: test_grid_pandapower
+  START_DATE: '2015-01-01 00:00:00'  # 'YYY-MM-DD HH:MM:SS'
+  DAYS: 1 # number of days of simulation
+  RT_FACTOR: null
+SIM_CONFIG: # list of simulatorS that will be used in the scenario
+  grid:
+    RUN_PROCESS:
+      python: pandapower
+    PARAMS:
+      step_size: 900
+    MODELS:
+      Grid:
+        PUBLIC: true
+        PARAMS:
+          gridfile: 'lv_10b_4l'
+  csv_home:
+    RUN_PROCESS:
+      cmd: timeseries
+    PARAMS:
+      start_date: START_DATE
+      datafile: 'timeseries/household_load_occ.csv'
+      stepsize: 900
+    MODELS:
+      HomeSimulator:
+        PUBLIC: true
+        PARAMS: []
+        ATTRS: [P]
+CONNECTIONS:
+  0:
+    FROM: csv_home.HomeSimulator_0
+    TO: grid.Grid_0.ext_load_at_bus8
+    ATTRS: [[P, p_mw]]
+SCEN_OUTPUTS:
+  DB:
+    step_size: 900
+    attrs: [grid.Grid_0.bus1ref.vm_pu,
+            grid.Grid_0.bus4.vm_pu,
+            grid.Grid_0.bus5.vm_pu,
+            grid.Grid_0.bus6.vm_pu,
+            grid.Grid_0.bus7.vm_pu,
+            grid.Grid_0.bus8.vm_pu,
+            grid.Grid_0.bus9.vm_pu]

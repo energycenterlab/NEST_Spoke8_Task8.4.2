@@ -1,0 +1,34 @@
+---
+mk_api:
+  pandapower:
+    - mk_en_pandapower:Pandapower
+    - python mk_en_pandapower.py %(addr)s # "connect": "130.192.177.102:5690"
+  pv:
+    - mk_pvsim:PV_Sim
+    - python mk_pvsim.py %(addr)s
+  timeseries:
+    - mk_timeseries:TimeSeriesSim
+    - python mk_timeseries.py %(addr)s
+  hdf5:
+    - mk_hdf5:MosaikHdf5
+    - python mk_hdf5.py %(addr)s
+  pyfmi:
+    - mk_fmu_pyfmi:FMU_Adapter
+    - python mk_fmu_pyfmi.py %(addr)s
+  household_rich:
+    - mk_household_richpy:HouseholdRich
+    - python mk_household_richpy.py %(addr)s
+  pvlib:
+    - mk_pvsim_pvlib:PVSim
+    - python mk_pvsim_pvlib.py %(addr)s
+  meter:
+    - mk_metersim:SMModel
+    - python mk_metersim.py %(addr)s
+  csv:
+    - mk_csvsim:CSV
+    - python mk_csvsim.py %(addr)s
+  scheduler:
+    - mk_scheduler:AgentScheduler
+    - python mk_scheduler.py %(addr)s
+solvers:
+  matlab: C:\"Program Files"\MATLAB\R2022a\toolbox\shared\fmu_share\script
